@@ -1,4 +1,4 @@
--- run the following statements to create a database, schema, and a table with data loaded from aws s3.
+-- Run the following statements to create a database, schema, and a table with data loaded from aws s3.
 
 create database if not exists dash_mcp_db;
 create schema if not exists data;
@@ -172,8 +172,10 @@ create or replace table fact_support_tickets (
 copy into fact_support_tickets
   from @support_data_stage;
 
--- run the following statement to create a snowflake managed internal stage to store the semantic model files.
+-- Run the following statement to create a snowflake managed internal stage to store the semantic model files.
 create or replace stage semantic_models encryption = (type = 'snowflake_sse') directory = ( enable = true );
 
--- enable cross-region inference
+-- Enable cross-region inference
 alter account set cortex_enabled_cross_region = 'any_region';
+
+select 'Congratulations! The setup is complete. You can now proceed to the next step in the guide.' as message;
