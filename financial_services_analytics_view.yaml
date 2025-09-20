@@ -1,0 +1,982 @@
+name: financial_services_analytics
+description: |
+  Comprehensive semantic model for financial services analytics, providing 
+  unified business definitions and relationships across customer data, 
+  transactions, marketing campaigns, support interactions, and risk assessments. 
+  Designed for natural language querying, executive dashboards, and 
+  self-service business intelligence.
+tables:
+  - name: DIM_CAMPAIGNS
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: DIM_CAMPAIGNS
+    dimensions:
+      - name: CAMPAIGN_ID
+        synonyms:
+          - campaign_key
+          - marketing_campaign_id
+          - promotion_id
+          - campaign_code
+        description: Unique identifier for marketing campaigns.
+        expr: CAMPAIGN_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CAMP00001
+          - CAMP00002
+          - CAMP00003
+      - name: CAMPAIGN_TYPE
+        synonyms:
+          - marketing_type
+          - channel_type
+          - media_type
+          - promotion_type
+        description: Type of marketing campaign or communication channel used.
+        expr: CAMPAIGN_TYPE
+        data_type: VARCHAR(20)
+        sample_values:
+          - Email
+          - SMS
+          - Direct Mail
+          - Social Media
+          - Display Ads
+      - name: OBJECTIVE
+        synonyms:
+          - campaign_goal
+          - marketing_objective
+          - purpose
+          - campaign_intent
+        description: Primary business objective of the marketing campaign.
+        expr: OBJECTIVE
+        data_type: VARCHAR(20)
+        sample_values:
+          - Acquisition
+          - Retention
+          - Cross-sell
+          - Upsell
+          - Reactivation
+      - name: STATUS
+        synonyms:
+          - campaign_status
+          - execution_status
+          - campaign_state
+          - progress_status
+        description: Current status of the marketing campaign (Planning, Active, Completed, Paused, Cancelled).
+        expr: STATUS
+        data_type: VARCHAR(20)
+        sample_values:
+          - Planning
+          - Active
+          - Completed
+          - Paused
+          - Cancelled
+      - name: TARGET_AUDIENCE
+        synonyms:
+          - target_segment
+          - audience_segment
+          - customer_target
+          - target_group
+        description: Customer segment targeted by the marketing campaign.
+        expr: TARGET_AUDIENCE
+        data_type: VARCHAR(20)
+        sample_values:
+          - Premium
+          - Standard
+          - Basic
+          - VIP
+    time_dimensions:
+      - name: END_DATE
+        synonyms:
+          - campaign_end_date
+          - completion_date
+          - finish_date
+          - termination_date
+        description: Date when the marketing campaign ended or was completed.
+        expr: END_DATE
+        data_type: DATE
+        sample_values:
+          - '2025-04-21'
+          - '2024-08-15'
+          - '2024-09-22'
+      - name: START_DATE
+        synonyms:
+          - campaign_start_date
+          - launch_date
+          - begin_date
+          - commencement_date
+        description: Date when the marketing campaign started or was launched.
+        expr: START_DATE
+        data_type: DATE
+        sample_values:
+          - '2024-01-21'
+          - '2024-03-15'
+          - '2024-06-22'
+    facts:
+      - name: ACTUAL_SPEND
+        synonyms:
+          - spend
+          - actual_cost
+          - campaign_cost
+          - total_spend
+        description: Actual amount spent on the marketing campaign.
+        expr: ACTUAL_SPEND
+        data_type: NUMBER(12,2)
+        access_modifier: public_access
+        sample_values:
+          - 48500
+          - 127500
+          - 73200
+      - name: BUDGET
+        synonyms:
+          - campaign_budget
+          - allocated_budget
+          - marketing_spend
+          - investment
+        description: Total budget allocated for the marketing campaign.
+        expr: BUDGET
+        data_type: NUMBER(12,2)
+        access_modifier: public_access
+        sample_values:
+          - 50000
+          - 125000
+          - 75000
+      - name: CONVERSIONS
+        synonyms:
+          - conversion_count
+          - successful_conversions
+          - campaign_conversions
+          - leads_converted
+        description: Total number of customers who converted as a result of the campaign.
+        expr: CONVERSIONS
+        data_type: NUMBER(8,0)
+        access_modifier: public_access
+        sample_values:
+          - 245
+          - 1250
+          - 890
+      - name: ROI
+        synonyms:
+          - return_on_investment
+          - campaign_roi
+          - marketing_roi
+          - roi_percentage
+        description: Return on investment for the marketing campaign as a percentage.
+        expr: ROI
+        data_type: NUMBER(8,2)
+        access_modifier: public_access
+        sample_values:
+          - 125.5
+          - 89.75
+          - 156.25
+    primary_key:
+      columns:
+        - CAMPAIGN_ID
+  - name: DIM_CUSTOMERS
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: DIM_CUSTOMERS
+    dimensions:
+      - name: ACQUISITION_CHANNEL
+        synonyms:
+          - source_channel
+          - acquisition_source
+          - marketing_channel
+          - lead_source
+          - origination_channel
+        description: Channel through which the customer was acquired by the institution.
+        expr: ACQUISITION_CHANNEL
+        data_type: VARCHAR(30)
+        sample_values:
+          - Online
+          - Branch
+          - Mobile App
+          - Referral
+          - Marketing Campaign
+      - name: CUSTOMER_ID
+        synonyms:
+          - customer_key
+          - client_id
+          - account_holder_id
+          - customer_number
+          - client_key
+        description: Unique identifier for each customer in the financial institution.
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CUST000001
+          - CUST000002
+          - CUST000003
+      - name: CUSTOMER_SEGMENT
+        synonyms:
+          - segment
+          - customer_tier
+          - client_segment
+          - customer_category
+          - tier
+          - customer_class
+        description: Customer segmentation based on value and relationship depth (Premium, Standard, Basic, VIP).
+        expr: CUSTOMER_SEGMENT
+        data_type: VARCHAR(20)
+        sample_values:
+          - Premium
+          - Standard
+          - Basic
+          - VIP
+      - name: REGION
+        synonyms:
+          - geographic_region
+          - area
+          - territory
+          - zone
+          - market_region
+        description: Geographic region where the customer is located for market analysis.
+        expr: REGION
+        data_type: VARCHAR(20)
+        sample_values:
+          - North
+          - South
+          - East
+          - West
+          - Central
+      - name: RISK_PROFILE
+        synonyms:
+          - risk_level
+          - risk_category
+          - risk_rating
+          - credit_risk
+          - risk_assessment
+        description: Customer risk classification based on credit and behavioral analysis.
+        expr: RISK_PROFILE
+        data_type: VARCHAR(10)
+        sample_values:
+          - Low
+          - Medium
+          - High
+      - name: STATUS
+        synonyms:
+          - customer_status
+          - account_status
+          - relationship_status
+          - customer_state
+          - account_state
+        description: Current status of the customer relationship (Active, Inactive, Suspended, Closed).
+        expr: STATUS
+        data_type: VARCHAR(20)
+        sample_values:
+          - Active
+          - Inactive
+          - Suspended
+          - Closed
+    time_dimensions:
+      - name: JOIN_DATE
+        synonyms:
+          - onboarding_date
+          - account_open_date
+          - relationship_start_date
+          - enrollment_date
+        description: Date when the customer first established their relationship with the institution.
+        expr: JOIN_DATE
+        data_type: DATE
+        sample_values:
+          - '2023-11-01'
+          - '2021-02-12'
+          - '2024-01-29'
+    facts:
+      - name: ANNUAL_INCOME
+        synonyms:
+          - yearly_income
+          - gross_income
+          - salary
+          - income
+          - yearly_earnings
+        description: Customer's reported annual income used for lending and product decisions.
+        expr: ANNUAL_INCOME
+        data_type: NUMBER(10,2)
+        access_modifier: public_access
+        sample_values:
+          - 279178
+          - 408468
+          - 287455
+      - name: CREDIT_SCORE
+        synonyms:
+          - fico_score
+          - credit_rating
+          - creditworthiness
+          - credit_grade
+        description: Customer's credit score ranging from 300 to 850, indicating creditworthiness.
+        expr: CREDIT_SCORE
+        data_type: NUMBER(3,0)
+        access_modifier: public_access
+        sample_values:
+          - 570
+          - 387
+          - 685
+      - name: LIFETIME_VALUE
+        synonyms:
+          - clv
+          - customer_value
+          - total_value
+          - relationship_value
+          - customer_worth
+        description: Calculated customer lifetime value representing total expected revenue from the relationship.
+        expr: LIFETIME_VALUE
+        data_type: NUMBER(10,2)
+        access_modifier: public_access
+        sample_values:
+          - 16445.85
+          - 3037.86
+          - 31119.98
+    primary_key:
+      columns:
+        - CUSTOMER_ID
+  - name: FACT_MARKETING_RESPONSES
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: FACT_MARKETING_RESPONSES
+    dimensions:
+      - name: CAMPAIGN_ID
+        synonyms:
+          - campaign_key
+          - marketing_campaign_id
+          - promotion_id
+          - campaign_code
+        description: Foreign key linking to the marketing campaign that generated this response.
+        expr: CAMPAIGN_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CAMP00001
+          - CAMP00002
+          - CAMP00003
+      - name: CHANNEL_USED
+        synonyms:
+          - marketing_channel
+          - campaign_channel
+          - outreach_channel
+          - communication_medium
+        description: Channel through which the customer was contacted for the campaign.
+        expr: CHANNEL_USED
+        data_type: VARCHAR(20)
+        sample_values:
+          - Email
+          - SMS
+          - Phone Call
+          - Direct Mail
+          - Social Media
+      - name: CUSTOMER_ID
+        synonyms:
+          - customer_key
+          - client_id
+          - account_holder_id
+          - customer_number
+        description: Foreign key linking to the customer who responded to the marketing campaign.
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CUST002612
+          - CUST004789
+          - CUST001999
+      - name: RESPONSE_ID
+        synonyms:
+          - response_key
+          - marketing_response_id
+          - interaction_id
+          - response_identifier
+        description: Unique identifier for each marketing campaign response.
+        expr: RESPONSE_ID
+        data_type: VARCHAR(12)
+        sample_values:
+          - RESP00000001
+          - RESP00000002
+          - RESP00000003
+      - name: RESPONSE_TYPE
+        synonyms:
+          - interaction_type
+          - engagement_type
+          - action_type
+          - behavior_type
+        description: Type of customer response to the marketing campaign.
+        expr: RESPONSE_TYPE
+        data_type: VARCHAR(20)
+        sample_values:
+          - Opened
+          - Clicked
+          - Converted
+          - Unsubscribed
+          - No Response
+    time_dimensions:
+      - name: CONTACTED_DATE
+        synonyms:
+          - campaign_date
+          - outreach_date
+          - contact_date
+          - communication_date
+        description: Date when the customer was contacted as part of the marketing campaign.
+        expr: CONTACTED_DATE
+        data_type: DATE
+        sample_values:
+          - '2024-03-15'
+          - '2024-06-22'
+          - '2024-09-10'
+    facts:
+      - name: CONVERSION_VALUE
+        synonyms:
+          - revenue_generated
+          - sales_value
+          - conversion_revenue
+          - attributed_revenue
+        description: Monetary value generated from customer conversions attributed to the campaign.
+        expr: CONVERSION_VALUE
+        data_type: NUMBER(10,2)
+        access_modifier: public_access
+        sample_values:
+          - 2500
+          - 1750.5
+          - 0
+      - name: ENGAGEMENT_SCORE
+        synonyms:
+          - interaction_score
+          - activity_score
+          - participation_score
+          - involvement_score
+        description: Quantified engagement level of the customer with the marketing campaign (0-100).
+        expr: ENGAGEMENT_SCORE
+        data_type: NUMBER(3,0)
+        access_modifier: public_access
+        sample_values:
+          - 85
+          - 67
+          - 42
+    primary_key:
+      columns:
+        - RESPONSE_ID
+  - name: FACT_RISK_ASSESSMENTS
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: FACT_RISK_ASSESSMENTS
+    dimensions:
+      - name: ASSESSMENT_ID
+        synonyms:
+          - assessment_key
+          - risk_assessment_id
+          - evaluation_id
+          - assessment_number
+        description: Unique identifier for each risk assessment.
+        expr: ASSESSMENT_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - RISK000001
+          - RISK000002
+          - RISK000003
+      - name: CUSTOMER_ID
+        synonyms:
+          - customer_key
+          - client_id
+          - account_holder_id
+          - customer_number
+        description: Foreign key linking to the customer being assessed for risk.
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CUST002904
+          - CUST001517
+          - CUST003456
+      - name: OVERALL_RISK_RATING
+        synonyms:
+          - risk_level
+          - risk_category
+          - risk_grade
+          - composite_risk
+        description: Overall risk classification based on comprehensive risk analysis.
+        expr: OVERALL_RISK_RATING
+        data_type: VARCHAR(15)
+        sample_values:
+          - Low
+          - Medium
+          - High
+          - Very High
+    time_dimensions:
+      - name: ASSESSMENT_DATE
+        synonyms:
+          - risk_assessment_date
+          - evaluation_date
+          - review_date
+          - analysis_date
+        description: Date when the risk assessment was conducted.
+        expr: ASSESSMENT_DATE
+        data_type: DATE
+        sample_values:
+          - '2024-01-15'
+          - '2024-06-22'
+          - '2024-11-08'
+    facts:
+      - name: AML_RISK_SCORE
+        synonyms:
+          - anti_money_laundering_score
+          - aml_score
+          - compliance_risk_score
+          - regulatory_risk_score
+        description: Anti-money laundering risk score for regulatory compliance (0-100).
+        expr: AML_RISK_SCORE
+        data_type: NUMBER(5,2)
+        access_modifier: public_access
+        sample_values:
+          - 12.5
+          - 34.75
+          - 56.25
+      - name: CREDIT_RISK_SCORE
+        synonyms:
+          - credit_score
+          - creditworthiness_score
+          - default_risk_score
+          - lending_risk_score
+        description: Quantified credit risk score indicating likelihood of default (0-100).
+        expr: CREDIT_RISK_SCORE
+        data_type: NUMBER(5,2)
+        access_modifier: public_access
+        sample_values:
+          - 25.5
+          - 67.25
+          - 89.75
+      - name: FRAUD_RISK_SCORE
+        synonyms:
+          - fraud_score
+          - anomaly_risk_score
+          - suspicious_activity_score
+          - fraud_probability
+        description: Fraud risk assessment score indicating likelihood of fraudulent activity (0-100).
+        expr: FRAUD_RISK_SCORE
+        data_type: NUMBER(5,2)
+        access_modifier: public_access
+        sample_values:
+          - 15.25
+          - 45.8
+          - 78.9
+    primary_key:
+      columns:
+        - ASSESSMENT_ID
+  - name: FACT_SUPPORT_TICKETS
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: FACT_SUPPORT_TICKETS
+    dimensions:
+      - name: ACCOUNT_ID
+        synonyms:
+          - account_key
+          - account_number
+          - account_identifier
+          - related_account_id
+        description: Foreign key linking to the account related to the support ticket (optional).
+        expr: ACCOUNT_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - ACC0002858
+          - ACC0009508
+          - ACC0008655
+      - name: CATEGORY
+        synonyms:
+          - ticket_category
+          - issue_type
+          - problem_category
+          - request_type
+        description: Primary category of the customer support request or issue.
+        expr: CATEGORY
+        data_type: VARCHAR(30)
+        sample_values:
+          - Account Issue
+          - Transaction Dispute
+          - Technical Problem
+          - Product Inquiry
+          - Fraud Report
+      - name: CHANNEL
+        synonyms:
+          - contact_channel
+          - support_channel
+          - communication_channel
+          - service_channel
+        description: Channel through which the customer contacted support.
+        expr: CHANNEL
+        data_type: VARCHAR(20)
+        sample_values:
+          - Phone
+          - Email
+          - Chat
+          - Mobile App
+          - Branch
+      - name: CUSTOMER_ID
+        synonyms:
+          - customer_key
+          - client_id
+          - account_holder_id
+          - customer_number
+        description: Foreign key linking to the customer who created the support ticket.
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(10)
+        sample_values:
+          - CUST001344
+          - CUST004450
+          - CUST004043
+      - name: PRIORITY
+        synonyms:
+          - urgency
+          - severity
+          - importance_level
+          - escalation_level
+        description: Priority level assigned to the support ticket (Low, Medium, High, Critical).
+        expr: PRIORITY
+        data_type: VARCHAR(10)
+        sample_values:
+          - Low
+          - Medium
+          - High
+          - Critical
+      - name: STATUS
+        synonyms:
+          - ticket_status
+          - resolution_status
+          - current_status
+          - state
+        description: Current status of the support ticket in the resolution workflow.
+        expr: STATUS
+        data_type: VARCHAR(20)
+        sample_values:
+          - Resolved
+          - Escalated
+          - Pending
+          - Closed
+          - Cancelled
+      - name: TICKET_ID
+        synonyms:
+          - ticket_key
+          - support_ticket_id
+          - ticket_number
+          - case_id
+        description: Unique identifier for each customer support ticket.
+        expr: TICKET_ID
+        data_type: VARCHAR(11)
+        sample_values:
+          - TKT00000001
+          - TKT00000002
+          - TKT00000003
+    time_dimensions:
+      - name: CREATED_DATE
+        synonyms:
+          - ticket_date
+          - request_date
+          - contact_date
+          - submission_date
+        description: Date when the support ticket was created or customer first contacted support.
+        expr: CREATED_DATE
+        data_type: DATE
+        sample_values:
+          - '2025-05-29'
+          - '2025-08-13'
+          - '2024-09-06'
+    facts:
+      - name: FIRST_RESPONSE_TIME_MINUTES
+        synonyms:
+          - initial_response_time
+          - first_contact_time
+          - response_time
+          - time_to_first_response
+        description: Time in minutes from ticket creation to first agent response.
+        expr: FIRST_RESPONSE_TIME_MINUTES
+        data_type: NUMBER(8,2)
+        access_modifier: public_access
+        sample_values:
+          - 33.28
+          - 20.55
+          - 45.72
+      - name: RESOLUTION_TIME_HOURS
+        synonyms:
+          - resolution_time
+          - time_to_resolve
+          - handling_time
+          - completion_time
+        description: Total time in hours from ticket creation to resolution.
+        expr: RESOLUTION_TIME_HOURS
+        data_type: NUMBER(8,2)
+        access_modifier: public_access
+        sample_values:
+          - 3
+          - 32
+          - 48.5
+      - name: SATISFACTION_SCORE
+        synonyms:
+          - csat
+          - customer_satisfaction
+          - service_rating
+          - satisfaction_rating
+        description: Customer satisfaction score on a 1-5 scale for the support interaction.
+        expr: SATISFACTION_SCORE
+        data_type: NUMBER(1,0)
+        access_modifier: public_access
+        sample_values:
+          - 4
+          - 5
+          - 3
+    primary_key:
+      columns:
+        - TICKET_ID
+  - name: FACT_TRANSACTIONS
+    base_table:
+      database: DASH_MCP_DB
+      schema: DATA
+      table: FACT_TRANSACTIONS
+    dimensions:
+      - name: ACCOUNT_ID
+        synonyms:
+          - account_key
+          - account_number
+          - account_identifier
+          - bank_account_id
+        description: Foreign key linking to the account involved in the transaction.
+        expr: ACCOUNT_ID
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - ACC0006594
+          - ACC0003380
+          - ACC0002885
+      - name: CHANNEL
+        synonyms:
+          - transaction_channel
+          - delivery_channel
+          - access_channel
+          - service_channel
+        description: Channel through which the transaction was initiated (ATM, Online, Mobile, Branch).
+        expr: CHANNEL
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - ATM
+          - Online
+          - Mobile
+          - Branch
+          - Phone
+      - name: CUSTOMER_ID
+        synonyms:
+          - customer_key
+          - client_id
+          - account_holder_id
+          - customer_number
+        description: Foreign key linking to the customer who initiated the transaction.
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - CUST003081
+          - CUST001571
+          - CUST001353
+      - name: MERCHANT_CATEGORY
+        synonyms:
+          - merchant_type
+          - business_category
+          - vendor_category
+          - mcc
+        description: Category of merchant where the transaction occurred (for purchase transactions).
+        expr: MERCHANT_CATEGORY
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - Groceries
+          - Gas
+          - Restaurant
+          - Shopping
+          - Entertainment
+      - name: TRANSACTION_ID
+        synonyms:
+          - txn_id
+          - transaction_key
+          - transaction_identifier
+          - transaction_number
+        description: Unique identifier for each financial transaction.
+        expr: TRANSACTION_ID
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - TXN00000001
+          - TXN00000002
+          - TXN00000003
+      - name: TRANSACTION_TYPE
+        synonyms:
+          - txn_type
+          - transaction_category
+          - payment_type
+          - activity_type
+        description: Type of financial transaction (Deposit, Withdrawal, Transfer, Payment, etc.).
+        expr: TRANSACTION_TYPE
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - Deposit
+          - Withdrawal
+          - Transfer
+          - Payment
+          - Purchase
+    time_dimensions:
+      - name: TRANSACTION_DATE
+        synonyms:
+          - txn_date
+          - activity_date
+          - process_date
+          - settlement_date
+        description: Date and time when the transaction occurred.
+        expr: TRANSACTION_DATE
+        data_type: TIMESTAMP_NTZ(9)
+        sample_values:
+          - '2025-07-31'
+          - '2024-01-29'
+          - '2023-08-30'
+    facts:
+      - name: AMOUNT
+        synonyms:
+          - transaction_amount
+          - txn_amount
+          - dollar_amount
+          - value
+          - transaction_value
+        description: Monetary amount of the transaction (positive for credits, negative for debits).
+        expr: AMOUNT
+        data_type: NUMBER(38,2)
+        access_modifier: public_access
+        sample_values:
+          - -6952.6
+          - -470.76
+          - 294.8
+      - name: BALANCE_AFTER
+        synonyms:
+          - ending_balance
+          - account_balance
+          - balance_post_transaction
+          - remaining_balance
+        description: Account balance immediately following the transaction.
+        expr: BALANCE_AFTER
+        data_type: NUMBER(38,2)
+        access_modifier: public_access
+        sample_values:
+          - -276681.74
+          - 4960.5
+          - 6096.39
+      - name: FRAUD_SCORE
+        synonyms:
+          - risk_score
+          - fraud_risk
+          - anomaly_score
+          - suspicious_score
+        description: AI-generated fraud risk score from 0-100, with higher values indicating greater risk.
+        expr: FRAUD_SCORE
+        data_type: NUMBER(38,2)
+        access_modifier: public_access
+        sample_values:
+          - 51.11
+          - 30.12
+          - 9.56
+    primary_key:
+      columns:
+        - TRANSACTION_ID
+relationships:
+  - name: MARKETING_TO_CAMPAIGNS
+    left_table: FACT_MARKETING_RESPONSES
+    right_table: DIM_CAMPAIGNS
+    relationship_columns:
+      - left_column: CAMPAIGN_ID
+        right_column: CAMPAIGN_ID
+    relationship_type: many_to_one
+    join_type: inner
+  - name: MARKETING_TO_CUSTOMERS
+    left_table: FACT_MARKETING_RESPONSES
+    right_table: DIM_CUSTOMERS
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    relationship_type: many_to_one
+    join_type: inner
+  - name: RISK_TO_CUSTOMERS
+    left_table: FACT_RISK_ASSESSMENTS
+    right_table: DIM_CUSTOMERS
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    relationship_type: many_to_one
+    join_type: inner
+  - name: SUPPORT_TO_CUSTOMERS
+    left_table: FACT_SUPPORT_TICKETS
+    right_table: DIM_CUSTOMERS
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    relationship_type: many_to_one
+    join_type: inner
+  - name: TRANSACTIONS_TO_CUSTOMERS
+    left_table: FACT_TRANSACTIONS
+    right_table: DIM_CUSTOMERS
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    relationship_type: many_to_one
+    join_type: inner
+verified_queries:
+  - name: What is the average customer lifetime value by region for customers with Low risk profile?
+    question: What is the average customer lifetime value by region for customers with Low risk profile?
+    sql: |-
+      SELECT
+        c.region,
+        MIN(c.join_date) AS start_date,
+        MAX(c.join_date) AS end_date,
+        AVG(c.lifetime_value) AS avg_lifetime_value
+      FROM
+        dim_customers AS c
+      WHERE
+        c.risk_profile = 'Low'
+      GROUP BY
+        c.region
+      ORDER BY
+        avg_lifetime_value DESC NULLS LAST
+    use_as_onboarding_question: false
+    verified_by: Dash Desai
+    verified_at: 1758241734
+  - name: What is the risk profile distribution across customer segments and their correlation with transaction volumes?
+    question: What is the risk profile distribution across customer segments and their correlation with transaction volumes?
+    sql: |-
+      WITH customer_segments AS (
+        SELECT
+          c.customer_segment,
+          c.risk_profile,
+          COUNT(c.customer_id) AS customer_count
+        FROM
+          dim_customers AS c
+        GROUP BY
+          c.customer_segment,
+          c.risk_profile
+      ),
+      transaction_volumes AS (
+        SELECT
+          c.customer_segment,
+          c.risk_profile,
+          COUNT(t.transaction_id) AS transaction_count,
+          SUM(t.amount) AS total_transaction_amount
+        FROM
+          fact_transactions AS t
+          INNER JOIN dim_customers AS c ON t.customer_id = c.customer_id
+        GROUP BY
+          c.customer_segment,
+          c.risk_profile
+      )
+      SELECT
+        cs.customer_segment,
+        cs.risk_profile,
+        cs.customer_count,
+        COALESCE(tv.transaction_count, 0) AS transaction_count,
+        COALESCE(tv.total_transaction_amount, 0) AS total_transaction_amount,
+        CASE
+          WHEN cs.customer_count > 0 THEN COALESCE(tv.transaction_count, 0) / NULLIF(cs.customer_count, 0)
+          ELSE 0
+        END AS avg_transactions_per_customer
+      FROM
+        customer_segments AS cs
+        LEFT JOIN transaction_volumes AS tv ON cs.customer_segment = tv.customer_segment
+        AND cs.risk_profile = tv.risk_profile
+      ORDER BY
+        cs.customer_segment,
+        cs.risk_profile
+    use_as_onboarding_question: false
+    verified_by: Dash Desai
+    verified_at: 1758241797

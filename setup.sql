@@ -88,8 +88,8 @@ create or replace table fact_marketing_responses (
     channel_used varchar(20),
     engagement_score number(3,0),
     constraint pk_fact_marketing_responses primary key (response_id),
-    constraint fk_mkt_customer foreign key (customer_id) references finserv_db.analytics.dim_customers(customer_id),
-    constraint fk_mkt_campaign foreign key (campaign_id) references finserv_db.analytics.dim_campaigns(campaign_id)
+    constraint fk_mkt_customer foreign key (customer_id) references dim_customers(customer_id),
+    constraint fk_mkt_campaign foreign key (campaign_id) references dim_campaigns(campaign_id)
 );
 
 copy into fact_marketing_responses
@@ -112,7 +112,7 @@ create or replace table fact_risk_assessments (
 	last_review_date date,
 	next_review_date date,
 	constraint pk_fact_risk_assessments primary key (assessment_id),
-	constraint fk_risk_customer foreign key (customer_id) references finserv_db.analytics.dim_customers(customer_id)
+	constraint fk_risk_customer foreign key (customer_id) references dim_customers(customer_id)
 );
 
 copy into fact_risk_assessments
@@ -165,8 +165,7 @@ create or replace table fact_support_tickets (
     satisfaction_score number(1,0),
     first_response_time_minutes number(8,2),
     constraint pk_fact_support_tickets primary key (ticket_id),
-    constraint fk_support_customer foreign key (customer_id) references finserv_db.analytics.dim_customers(customer_id),
-    constraint fk_support_account foreign key (account_id) references finserv_db.analytics.dim_accounts(account_id)
+    constraint fk_support_customer foreign key (customer_id) references dim_customers(customer_id)
 );
 
 copy into fact_support_tickets
