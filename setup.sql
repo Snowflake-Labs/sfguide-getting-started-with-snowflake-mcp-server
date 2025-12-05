@@ -174,6 +174,44 @@ copy into fact_support_tickets
 -- Run the following statement to create a snowflake managed internal stage to store the semantic model files.
 create or replace stage semantic_models encryption = (type = 'snowflake_sse') directory = ( enable = true );
 
+create or replace notification integration email_integration
+  type=email
+  enabled=true
+  default_subject = 'snowflake intelligence';
+
+create or replace procedure send_email(
+    recipient_email varchar,
+    subject varchar,
+    body varchar
+)
+returns varchar
+language python
+runtime_version = '3.12'
+packages = ('snowflake-snowpark-python')
+handler = 'send_email'
+as
+$$
+def send_email(session, recipient_email, subject, body):
+    try:
+        # Escape single quotes in the body
+        escaped_body = body.replace("'", "''")
+        
+        # Execute the system procedure call
+        session.sql(f"""
+            CALL SYSTEM$SEND_EMAIL(
+                'email_integration',
+                '{recipient_email}',
+                '{subject}',
+                '{escaped_body}',
+                'text/html'
+            )
+        """).collect()
+        
+        return "Email sent successfully"
+    except Exception as e:
+        return f"Error sending email: {str(e)}"
+$$;
+
 -- Enable cross-region inference
 alter account set cortex_enabled_cross_region = 'any_region';
 
