@@ -1,7 +1,15 @@
--- Run the following statements to create a database, schema, and a table with data loaded from aws s3.
+-- Snowflake-managed MCP server quickstart setup.
+-- Creates a warehouse, database, and schema, loads sample financial services data from AWS S3,
+-- creates the SEND_EMAIL stored procedure used later as a custom MCP tool, and creates a
+-- least-privileged role for MCP clients.
+
+use role accountadmin;
+
+-- OPTIONAL: enable cross-region inference if supported models aren't available in your region
+-- alter account set cortex_enabled_cross_region = 'ANY_REGION';
 
 create database if not exists dash_mcp_db;
-create schema if not exists data;
+create schema if not exists dash_mcp_db.data;
 create warehouse if not exists dash_wh_s warehouse_size=small;
 
 use dash_mcp_db.data;
@@ -171,13 +179,13 @@ create or replace table fact_support_tickets (
 copy into fact_support_tickets
   from @support_data_stage;
 
--- Run the following statement to create a snowflake managed internal stage to store the semantic model files.
+-- Internal stage for the semantic view YAML file (optional; Semantic View Autopilot can also upload it directly).
 create or replace stage semantic_models encryption = (type = 'snowflake_sse') directory = ( enable = true );
 
 create or replace notification integration email_integration
   type=email
   enabled=true
-  default_subject = 'snowflake intelligence';
+  default_subject = 'Snowflake MCP Server';
 
 create or replace procedure send_email(
     recipient_email varchar,
@@ -193,26 +201,29 @@ as
 $$
 def send_email(session, recipient_email, subject, body):
     try:
-        # Escape single quotes in the body
-        escaped_body = body.replace("'", "''")
-        
-        # Execute the system procedure call
-        session.sql(f"""
-            CALL SYSTEM$SEND_EMAIL(
-                'email_integration',
-                '{recipient_email}',
-                '{subject}',
-                '{escaped_body}',
-                'text/html'
-            )
-        """).collect()
+        # Use bind parameters so agent-supplied values can't alter the SQL
+        session.sql(
+            "CALL SYSTEM$SEND_EMAIL('email_integration', ?, ?, ?, 'text/html')",
+            params=[recipient_email, subject, body]
+        ).collect()
         
         return "Email sent successfully"
     except Exception as e:
         return f"Error sending email: {str(e)}"
 $$;
 
--- Enable cross-region inference
-alter account set cortex_enabled_cross_region = 'any_region';
+-- Least-privileged role for MCP clients. The programmatic access token (PAT) you create in the guide is
+-- restricted to this role, so MCP clients never run with ACCOUNTADMIN privileges. Grants on the Cortex Search
+-- service, semantic view, and MCP server are added in the guide after those objects exist.
+create role if not exists dash_mcp_role;
+grant database role snowflake.cortex_user to role dash_mcp_role;
+grant usage on warehouse dash_wh_s to role dash_mcp_role;
+grant usage on database dash_mcp_db to role dash_mcp_role;
+grant usage on schema dash_mcp_db.data to role dash_mcp_role;
+grant select on all tables in schema dash_mcp_db.data to role dash_mcp_role;
+grant usage on procedure dash_mcp_db.data.send_email(varchar, varchar, varchar) to role dash_mcp_role;
+
+set current_user = (select current_user());
+grant role dash_mcp_role to user identifier($current_user);
 
 select 'Congratulations! The setup is complete. You can now proceed to the next step in the guide.' as message;
